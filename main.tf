@@ -34,16 +34,16 @@ resource "aws_wafv2_web_acl" "waf" {
 
       visibility_config {
         cloudwatch_metrics_enabled = true
-        metric_name                = rule.value.name
+        metric_name                = "${rule.value.name}-${var.web_acl_name}"
         sampled_requests_enabled   = true
       }
     }
   }
 
   visibility_config {
-    cloudwatch_metrics_enabled = true
+    cloudwatch_metrics_enabled = false
     metric_name                = var.web_acl_name
-    sampled_requests_enabled   = true
+    sampled_requests_enabled   = false
   }
 
   tags = merge(var.tags)
