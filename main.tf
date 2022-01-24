@@ -1,9 +1,4 @@
-resource "aws_cloudwatch_log_group" "wafrails" {
-  name              = "aws-waf-logs-${var.waf_log_group_name}"
-  retention_in_days = var.retention_in_days
-}
-
-resource "aws_wafv2_web_acl" "wafrails" {
+resource "aws_wafv2_web_acl" "waf" {
   name        = var.web_acl_name
   description = "AWS managed rule groups."
   scope       = "REGIONAL"
@@ -46,18 +41,18 @@ resource "aws_wafv2_web_acl" "wafrails" {
   }
 
   visibility_config {
-    cloudwatch_metrics_enabled = false
+    cloudwatch_metrics_enabled = true
     metric_name                = var.web_acl_name
-    sampled_requests_enabled   = false
+    sampled_requests_enabled   = true
   }
 }
 
-resource "aws_wafv2_web_acl_logging_configuration" "wafrails" {
-  log_destination_configs = [aws_cloudwatch_log_group.wafrails.arn]
-  resource_arn            = aws_wafv2_web_acl.wafrails.arn
+resource "aws_wafv2_web_acl_logging_configuration" "waf" {
+  log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
+  resource_arn            = aws_wafv2_web_acl.waf.arn
 }
 
-resource "aws_wafv2_web_acl_association" "wafrails" {
+resource "aws_wafv2_web_acl_association" "waf" {
   resource_arn = var.alb_arn
-  web_acl_arn  = aws_wafv2_web_acl.wafrails.arn
+  web_acl_arn  = aws_wafv2_web_acl.waf.arn
 }
