@@ -49,6 +49,12 @@ variable "retention_in_days" {
 }
 
 variable "web_acl_name" {
-  description = "Name for the Web ACL"
+  description = "Name for the Web ACL."
   type        = string
+}
+
+variable "tags" {
+  description = "(Optional) An map of key:value pairs to associate with all resources in the module."
+  type        = map(string)
+    default     = {}
 }

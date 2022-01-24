@@ -45,6 +45,8 @@ resource "aws_wafv2_web_acl" "waf" {
     metric_name                = var.web_acl_name
     sampled_requests_enabled   = true
   }
+
+  tags = merge(var.tags)
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "waf" {

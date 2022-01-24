@@ -46,6 +46,8 @@ resource "aws_kms_key" "cloudwatch_waf" {
   multi_region = true
 
   policy = data.aws_iam_policy_document.cloudwatch_waf_kms.json
+
+  tags = merge(var.tags)
 }
 
 resource "aws_kms_alias" "cloudwatch_waf" {
@@ -57,4 +59,6 @@ resource "aws_cloudwatch_log_group" "waf" {
   name              = "aws-waf-logs-${var.waf_log_group_name}"
   retention_in_days = var.retention_in_days
   kms_key_id        = aws_kms_key.cloudwatch_waf.arn
+
+  tags = merge(var.tags)
 }
