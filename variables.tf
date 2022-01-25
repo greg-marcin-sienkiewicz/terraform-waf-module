@@ -1,6 +1,6 @@
 variable "alb_arn" {
-  description = "ARN of the Application Load Balancer (ALB) to associate WAF rules"
-  type        = string
+  description = "List of ARN(s) of the Application Load Balancers (ALB) to associate WAF rules"
+  type        = list(string)
 }
 
 # AWS Managed Rules rule groups list
