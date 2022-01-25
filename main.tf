@@ -55,6 +55,7 @@ resource "aws_wafv2_web_acl_logging_configuration" "waf" {
 }
 
 resource "aws_wafv2_web_acl_association" "waf" {
-  resource_arn = var.alb_arn
+  for_each     = toset(var.alb_arn)
+  resource_arn = each.key
   web_acl_arn  = aws_wafv2_web_acl.waf.arn
 }
