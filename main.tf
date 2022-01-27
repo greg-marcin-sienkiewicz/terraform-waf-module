@@ -32,6 +32,13 @@ resource "aws_wafv2_web_acl" "waf" {
         }
       }
 
+            dynamic "excluded_rule" {
+              for_each = length(lookup(managed_rule_group_statement.value, "excluded_rule", {})) == 0 ? [] : toset(lookup(managed_rule_group_statement.value, "excluded_rule"))
+              content {
+                name = excluded_rule.value
+              }
+            }
+
       visibility_config {
         cloudwatch_metrics_enabled = true
         metric_name                = rule.value.name
