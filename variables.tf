@@ -13,6 +13,7 @@ variable "managed_rules" {
     name            = string
     priority        = number
     override_action = string
+    excluded_rule = list(string)
   }))
 
   validation {
