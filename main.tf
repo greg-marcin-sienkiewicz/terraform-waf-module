@@ -30,12 +30,12 @@ resource "aws_wafv2_web_acl" "waf" {
         managed_rule_group_statement {
           name        = rule.value.name
           vendor_name = "AWS"
-        }
 
-        dynamic "excluded_rule" {
-          for_each = var.managed_rules.excluded_rule
-          content {
-            name = each.value
+          dynamic "excluded_rule" {
+            for_each = rule.value.excluded_rule
+            content {
+              name = excluded_rule.value
+            }
           }
         }
       }
