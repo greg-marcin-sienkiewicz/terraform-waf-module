@@ -9,6 +9,7 @@ resource "aws_wafv2_web_acl" "waf" {
 
   dynamic "rule" {
     for_each = var.managed_rules
+
     content {
       name     = rule.value.name
       priority = rule.value.priority
@@ -30,14 +31,14 @@ resource "aws_wafv2_web_acl" "waf" {
           name        = rule.value.name
           vendor_name = "AWS"
         }
-      }
 
-            dynamic "excluded_rule" {
-              for_each = length(lookup(managed_rule_group_statement.value, "excluded_rule", {})) == 0 ? [] : toset(lookup(managed_rule_group_statement.value, "excluded_rule"))
-              content {
-                name = excluded_rule.value
-              }
-            }
+        dynamic "excluded_rule" {
+          for_each = var.managed_rules.excluded_rule
+          content {
+            name = each.value
+          }
+        }
+      }
 
       visibility_config {
         cloudwatch_metrics_enabled = true

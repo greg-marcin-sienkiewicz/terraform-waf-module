@@ -13,7 +13,7 @@ variable "managed_rules" {
     name            = string
     priority        = number
     override_action = string
-    excluded_rule = list(string)
+    excluded_rule   = list(string)
   }))
 
   validation {
@@ -57,5 +57,5 @@ variable "web_acl_name" {
 variable "tags" {
   description = "(Optional) An map of key:value pairs to associate with all resources in the module."
   type        = map(string)
-    default     = {}
+  default     = {}
 }
