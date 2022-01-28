@@ -66,7 +66,7 @@ resource "aws_cloudwatch_log_group" "waf" {
 ###=============== CloudWatch Log Insights - Queries   =============== ###
 
 resource "aws_cloudwatch_query_definition" "tail" {
-  name = "WAF/Tail View"
+  name = "WAF/Tail View - ${var.waf_log_group_name}"
 
   log_group_names = [aws_cloudwatch_log_group.waf.name]
 
