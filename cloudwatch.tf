@@ -62,3 +62,24 @@ resource "aws_cloudwatch_log_group" "waf" {
 
   tags = merge(var.tags)
 }
+
+###=============== CloudWatch Log Insights - Queries   =============== ###
+
+resource "aws_cloudwatch_query_definition" "tail" {
+  name = "WAF/Tail View"
+
+  log_group_names = [aws_cloudwatch_log_group.waf.name]
+
+  query_string = <<EOF
+fields @timestamp as Timestamp,
+  action as Action,
+  terminatingRuleId as Rule,
+  httpRequest.clientIp as Request_IP,
+  httpRequest.country as Request_Country,
+  httpRequest.httpMethod as Request_Method,
+  httpRequest.headers.0.value as Host,
+  httpRequest.uri as URI
+| sort @timestamp desc
+| limit 100
+EOF
+}
