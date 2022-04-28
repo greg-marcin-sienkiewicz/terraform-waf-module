@@ -97,7 +97,7 @@ fields @timestamp as Timestamp,
   labels.0.name	as WAF_Rule,
   terminatingRuleId as WAF_RuleID
 | sort @timestamp desc
-| filter httpRequest.clientIp LIKE "34.234.200.15"
+| filter httpRequest.clientIp LIKE "127.0.0.1"
 EOF
 }
 
@@ -130,5 +130,134 @@ fields httpRequest.country
 | stats count(*) as requestCount by httpRequest.country
 | sort requestCount desc
 | limit 100
+EOF
+}
+
+###=============== CloudWatch Dashboard   =============== ###
+
+resource "aws_cloudwatch_dashboard" "waf" {
+  dashboard_name = "${var.web_acl_name}-waf"
+
+  dashboard_body = <<EOF
+{
+    "widgets": [
+        {
+            "height": 6,
+            "width": 24,
+            "y": 16,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "stat": "Sum",
+                "view": "singleValue",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/WAFV2", "BlockedRequests", "Region", "us-east-1", "Rule", "AWSManagedRulesAmazonIpReputationList", "WebACL", "${var.web_acl_name}" ],
+                    [ "AWS/WAFV2", "BlockedRequests", "Region", "us-east-1", "Rule", "AWSManagedRulesCommonRuleSet", "WebACL", "${var.web_acl_name}" ],
+                    [ "AWS/WAFV2", "BlockedRequests", "Region", "us-east-1", "Rule", "AWSManagedRulesLinuxRuleSet", "WebACL", "${var.web_acl_name}" ],
+                    [ "AWS/WAFV2", "BlockedRequests", "Region", "us-east-1", "Rule", "AWSManagedRulesUnixRuleSet", "WebACL", "${var.web_acl_name}" ],
+                    [ "AWS/WAFV2", "BlockedRequests", "Region", "us-east-1", "Rule", "AWSManagedRulesSQLiRuleSet", "WebACL", "${var.web_acl_name}" ],
+                    [ "AWS/WAFV2", "BlockedRequests", "Region", "us-east-1", "Rule", "AWSManagedRulesKnownBadInputsRuleSet", "WebACL", "${var.web_acl_name}" ]
+                ],
+                "region": "us-east-1",
+                "title": "WAF Rule BlockedRequests",
+                "yAxis": {
+                    "left": {
+                        "showUnits": false
+                    },
+                    "right": {
+                        "showUnits": false
+                    }
+                },
+                "period": 300,
+                "setPeriodToTimeRange": true
+            }
+        },
+        {
+            "height": 8,
+            "width": 6,
+            "y": 0,
+            "x": 18,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields httpRequest.country\n| stats count(*) as requestCount by httpRequest.country\n| sort requestCount desc\n| limit 10",
+                "region": "us-east-1",
+                "stacked": false,
+                "title": "Top 10 by Country",
+                "view": "pie"
+            }
+        },
+        {
+            "height": 8,
+            "width": 6,
+            "y": 0,
+            "x": 0,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields terminatingRuleId\n| stats count(*) as requestCount by terminatingRuleId\n| filter terminatingRuleId not like \"Default_Action\"\n| sort requestCount desc\n| limit 10",
+                "region": "us-east-1",
+                "stacked": false,
+                "title": "Top 10 by Rule",
+                "view": "pie"
+            }
+        },
+        {
+            "height": 8,
+            "width": 6,
+            "y": 0,
+            "x": 6,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields httpRequest.clientIp\n| stats count(*) as requestCount by httpRequest.clientIp\n| sort requestCount desc\n| limit 10",
+                "region": "us-east-1",
+                "stacked": false,
+                "title": "Top 10 by IP Address",
+                "view": "pie"
+            }
+        },
+        {
+            "height": 8,
+            "width": 24,
+            "y": 8,
+            "x": 0,
+            "type": "metric",
+            "properties": {
+                "stat": "Sum",
+                "view": "timeSeries",
+                "stacked": true,
+                "metrics": [
+                    [ "AWS/WAFV2", "AllowedRequests", "Region", "us-east-1", "Rule", "${var.web_acl_name}", "WebACL", "${var.web_acl_name}" ],
+                    [ "AWS/WAFV2", "BlockedRequests", "Region", "us-east-1", "Rule", "${var.web_acl_name}", "WebACL", "${var.web_acl_name}" ]
+                ],
+                "region": "us-east-1",
+                "title": "WAF Activity",
+                "yAxis": {
+                    "left": {
+                        "showUnits": false
+                    },
+                    "right": {
+                        "showUnits": false
+                    }
+                },
+                "period": 300,
+                "setPeriodToTimeRange": true
+            }
+        },
+        {
+            "height": 8,
+            "width": 6,
+            "y": 0,
+            "x": 12,
+            "type": "log",
+            "properties": {
+                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields httpRequest.clientIp\n| stats count(*) as requestCount by httpRequest.clientIp\n| filter terminatingRuleId like \"AWSManagedRulesAmazonIpReputationList\"\n| sort requestCount desc\n| limit 10",
+                "region": "us-east-1",
+                "stacked": false,
+                "title": "Top 10 by AWSManagedRulesAmazonIpReputationList",
+                "view": "pie"
+            }
+        }
+    ]
+}
 EOF
 }
