@@ -226,8 +226,13 @@ resource "aws_cloudwatch_dashboard" "waf" {
                 "view": "timeSeries",
                 "stacked": true,
                 "metrics": [
-                    [ "AWS/WAFV2", "AllowedRequests", "Region", "us-east-1", "Rule", "${var.web_acl_name}", "WebACL", "${var.web_acl_name}" ],
-                    [ "AWS/WAFV2", "BlockedRequests", "Region", "us-east-1", "Rule", "${var.web_acl_name}", "WebACL", "${var.web_acl_name}" ]
+                    [ "AWS/WAFV2", "BlockedRequests", "WebACL", "${var.web_acl_name}", "Region", "us-east-1", "Rule", "AWSManagedRulesAmazonIpReputationList" ],
+                    [ "...", "AWSManagedRulesCommonRuleSet" ],
+                    [ "...", "AWSManagedRulesKnownBadInputsRuleSet" ],
+                    [ "...", "AWSManagedRulesLinuxRuleSet" ],
+                    [ "...", "AWSManagedRulesSQLiRuleSet" ],
+                    [ "...", "AWSManagedRulesUnixRuleSet" ],
+                    [ "...", "ALL" ]
                 ],
                 "region": "us-east-1",
                 "title": "WAF Activity",
