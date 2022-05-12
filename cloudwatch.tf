@@ -41,9 +41,10 @@ data "aws_iam_policy_document" "cloudwatch_waf_kms" {
 }
 
 resource "aws_kms_key" "cloudwatch_waf" {
-  description  = "aws-waf-logs-${var.waf_log_group_name}-key"
-  key_usage    = "ENCRYPT_DECRYPT"
-  multi_region = true
+  description         = "aws-waf-logs-${var.waf_log_group_name}-key"
+  key_usage           = "ENCRYPT_DECRYPT"
+  multi_region        = true
+  enable_key_rotation = true
 
   policy = data.aws_iam_policy_document.cloudwatch_waf_kms.json
 
