@@ -30,6 +30,13 @@ jobs:
       contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        files:
+          - main.tf
+          - outputs.tf
+          - variables.tf
+          - cloudwatch.tf
     steps:
       - uses: actions/checkout@v3
       - name: Run Snyk to check configuration files for security issues
@@ -50,4 +57,5 @@ jobs:
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: snyk.sarif
+          sarif_file: ${{ matrix.files }}
+          args: --severity-threshold=low
