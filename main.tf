@@ -1,5 +1,5 @@
 resource "aws_wafv2_ip_set" "block_ip_set" {
-  name               = "BlockIpSet"
+  name               = "BlockIpSet-${var.web_acl_name}"
   description        = "Block IP Set"
   scope              = "REGIONAL"
   ip_address_version = "IPV4"
@@ -7,11 +7,16 @@ resource "aws_wafv2_ip_set" "block_ip_set" {
 }
 
 resource "aws_wafv2_ip_set" "allow_ip_set" {
-  name               = "AllowIpSet"
+  name               = "AllowIpSet-${var.web_acl_name}"
   description        = "Allow IP Set"
   scope              = "REGIONAL"
   ip_address_version = "IPV4"
-  addresses          = flatten(["1.1.1.1/32", var.allow_ip_set_addresses])
+
+  addresses = flatten([[
+    "1.1.1.1/32", # Default one
+    "2.2.2.2/32", # Default two
+    "3.3.3.3/32", # Default three
+  ], var.allow_ip_set_addresses])
 }
 
 resource "aws_wafv2_web_acl" "waf" {
