@@ -21,7 +21,7 @@ resource "aws_wafv2_rule_group" "custom_rule" {
 
     statement {
       ip_set_reference_statement {
-        arn = aws_wafv2_ip_set.test.arn
+        arn = aws_wafv2_ip_set.block_ip_set.arn
       }
     }
 
