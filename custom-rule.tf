@@ -11,6 +11,12 @@ resource "aws_wafv2_rule_group" "custom_rule" {
   scope       = "REGIONAL"
   capacity    = 10
 
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "CustomRuleGroup"
+    sampled_requests_enabled   = true
+  }
+
   rule {
     name     = "BlockByIpSet"
     priority = 1
@@ -26,9 +32,9 @@ resource "aws_wafv2_rule_group" "custom_rule" {
     }
 
     visibility_config {
-      cloudwatch_metrics_enabled = false
+      cloudwatch_metrics_enabled = true
       metric_name                = "BlockByIpSet"
-      sampled_requests_enabled   = false
+      sampled_requests_enabled   = true
     }
   }
 }
