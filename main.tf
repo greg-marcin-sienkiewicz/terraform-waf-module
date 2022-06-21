@@ -1,3 +1,17 @@
+resource "aws_wafv2_ip_set" "block_ip_set" {
+  name               = "BlockIpSet"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = var.block_ip_set_addresses
+}
+
+resource "aws_wafv2_ip_set" "allow_ip_set" {
+  name               = "AllowIpSet"
+  scope              = "REGIONAL"
+  ip_address_version = "IPV4"
+  addresses          = flatten(["1.1.1.1/32", var.allow_ip_set_addresses])
+}
+
 resource "aws_wafv2_web_acl" "waf" {
   name        = var.web_acl_name
   description = "AWS managed rule groups."
@@ -8,8 +22,29 @@ resource "aws_wafv2_web_acl" "waf" {
   }
 
   rule {
-    name     = "BlockByIpSetCustomRule"
+    name     = "AllowByIpSetCustomRule"
     priority = 1
+
+    action {
+      allow {}
+    }
+
+    statement {
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.allow_ip_set.arn
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "AllowByIpSet"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "BlockByIpSetCustomRule"
+    priority = 2
 
     action {
       block {}

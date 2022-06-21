@@ -60,7 +60,13 @@ variable "tags" {
   default     = {}
 }
 
-variable "ip_set_addresses" {
+variable "block_ip_set_addresses" {
+  description = "An array of strings that specify one or more IPv4 addresses or blocks of IPv4 addresses in CIDR notation."
+  type        = list(string)
+  default     = []
+}
+
+variable "allow_ip_set_addresses" {
   description = "An array of strings that specify one or more IPv4 addresses or blocks of IPv4 addresses in CIDR notation."
   type        = list(string)
   default     = []
