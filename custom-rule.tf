@@ -20,32 +20,8 @@ resource "aws_wafv2_rule_group" "custom_rule" {
     }
 
     statement {
-
-      or_statement {
-        statement {
-
-          ip_set_reference_statement {
-            arn = aws_wafv2_ip_set.test.arn
-          }
-        }
-
-        statement {
-
-          regex_pattern_set_reference_statement {
-            arn = aws_wafv2_regex_pattern_set.block_ip_set.arn
-
-            field_to_match {
-              single_header {
-                name = "referer"
-              }
-            }
-
-            text_transformation {
-              priority = 2
-              type     = "NONE"
-            }
-          }
-        }
+      ip_set_reference_statement {
+        arn = aws_wafv2_ip_set.test.arn
       }
     }
 
