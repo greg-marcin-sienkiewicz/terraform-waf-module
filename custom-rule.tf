@@ -2,7 +2,7 @@ resource "aws_wafv2_ip_set" "block_ip_set" {
   name               = "BlockIpSet"
   scope              = "REGIONAL"
   ip_address_version = "IPV4"
-  addresses          = ["1.1.1.1/32", "2.2.2.2/32"]
+  addresses          = flatten(["1.1.1.1/32", "2.2.2.2/32"], var.ip_set_addresses)
 }
 
 resource "aws_wafv2_rule_group" "custom_rule" {

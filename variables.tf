@@ -59,3 +59,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "ip_set_addresses" {
+  description = "An array of strings that specify one or more IPv4 addresses or blocks of IPv4 addresses in CIDR notation."
+  type        = list(string)
+  default     = []
+}
