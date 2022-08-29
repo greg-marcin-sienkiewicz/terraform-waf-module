@@ -143,7 +143,7 @@ resource "aws_cloudwatch_dashboard" "waf" {
 {
     "widgets": [
         {
-            "height": 6,
+            "height": 3,
             "width": 24,
             "y": 16,
             "x": 0,
@@ -181,7 +181,7 @@ resource "aws_cloudwatch_dashboard" "waf" {
             "x": 18,
             "type": "log",
             "properties": {
-                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields httpRequest.country\n| stats count(*) as requestCount by httpRequest.country\n| sort requestCount desc\n| limit 10",
+                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields httpRequest.country\n| filter action not like \"ALLOW\"\n| stats count(*) as requestCount by httpRequest.country\n| sort requestCount desc\n| limit 10",
                 "region": "us-east-1",
                 "stacked": false,
                 "title": "Top 10 by Country",
@@ -195,7 +195,7 @@ resource "aws_cloudwatch_dashboard" "waf" {
             "x": 0,
             "type": "log",
             "properties": {
-                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields terminatingRuleId\n| stats count(*) as requestCount by terminatingRuleId\n| filter terminatingRuleId not like \"Default_Action\"\n| sort requestCount desc\n| limit 10",
+                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields terminatingRuleId\n| filter action not like \"ALLOW\"\n| stats count(*) as requestCount by terminatingRuleId\n| sort requestCount desc\n| limit 10",
                 "region": "us-east-1",
                 "stacked": false,
                 "title": "Top 10 by Rule",
@@ -209,7 +209,7 @@ resource "aws_cloudwatch_dashboard" "waf" {
             "x": 6,
             "type": "log",
             "properties": {
-                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields httpRequest.clientIp\n| stats count(*) as requestCount by httpRequest.clientIp\n| sort requestCount desc\n| limit 10",
+                "query": "SOURCE 'aws-waf-logs-${var.waf_log_group_name}' | fields httpRequest.clientIp\n| filter action not like \"ALLOW\"\n| stats count(*) as requestCount by httpRequest.clientIp\n| sort requestCount desc\n| limit 10",
                 "region": "us-east-1",
                 "stacked": false,
                 "title": "Top 10 by IP Address",
