@@ -1,4 +1,4 @@
-# terraform-waf-module
+# Terraform AWS WAFv2 Module
 
 The module utilizes git Tags to denote release with Semantic versioning. Each release is prefixed with the letter v.
 
@@ -16,3 +16,7 @@ module "name" {
   tags               = var.tags
 }
 ```
+
+## Reference
+
+[AWS Cloud Operations & Migrations Blog - Analyzing AWS WAF Logs in Amazon CloudWatch Logs](https://aws.amazon.com/blogs/mt/analyzing-aws-waf-logs-in-amazon-cloudwatch-logs/?ck_subscriber_id=1520976344)
